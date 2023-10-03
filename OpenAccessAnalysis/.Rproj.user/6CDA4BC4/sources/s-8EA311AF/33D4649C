@@ -1,27 +1,27 @@
 {
-    "id": "928FD8AF",
-    "path": "C:/Rosenberg/Work/USU/Service/JournalReviews/WRPM/Admin/OpenAccessAnalysis/OpenAccessAnalysis.Rmd",
+    "id": "33D4649C",
+    "path": "C:/Rosenberg/Work/USU/Service/JournalReviews/WRPM/Admin/wrpm_reproduc/OpenAccessAnalysis/OpenAccessAnalysis.Rmd",
     "project_path": "OpenAccessAnalysis.Rmd",
     "type": "r_markdown",
-    "hash": "230785864",
+    "hash": "3581667687",
     "contents": "",
     "dirty": false,
-    "created": 1685482035399.0,
+    "created": 1696369581302.0,
     "source_on_save": false,
-    "relative_order": 2,
+    "relative_order": 4,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "1,60",
+        "cursorPosition": "10,22",
         "scrollLine": "0",
-        "last_setup_crc32": ""
+        "last_setup_crc32": "8EA311AFd6867b01"
     },
     "folds": "",
-    "lastKnownWriteTime": 1694627624,
+    "lastKnownWriteTime": 1696369594,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1694627624730,
+    "last_content_update": 1696369594834,
     "read_only": false,
     "read_only_alternatives": []
 }

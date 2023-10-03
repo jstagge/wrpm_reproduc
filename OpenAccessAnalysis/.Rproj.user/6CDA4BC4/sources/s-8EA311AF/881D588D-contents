@@ -1,27 +1,15 @@
----
-title: "Open-Access Analysis for Journal of Hydroinformatics"
-author: "David E. Rosenberg"
-date: "July 7, 2023"
-output: pdf_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
 # OpenAccessAnalysis.R
 #
 # Reports
-# 1. Number of open-access articles from 2020 to 2023 from Scopus query.
+# 1. Number of open-access articles in JWRPM frojm 2018 to 2023 from Scopus querry.
 # 2. Whether number of citations is statistically different for open-access vs closed-access articles.
-# Figure 1. Percent Open Access by Year
-# Figure 2. Cumulative distributions of citations.
 #
 #
 # This is a beginning R-programming effort! There could be lurking bugs or basic coding errors that I am not even aware of.
 # Please report bugs/feedback to me (contact info below)
 #
 # David E. Rosenberg
-# July 7, 2023
+# May 30, 2023
 # Utah State University
 # david.rosenberg@usu.edu
 
@@ -86,42 +74,17 @@ if (!require(ggrepel)) {
   library(ggrepel) 
 }
 
-# Create a data frame to connect csv files with journal so user can select
-
-dfJournals <- data.frame(JournalTitle = c("Water Resources Planing and Management", "All ASCE Journals", "Water Resources Research", "Journal of American Water Resources Association", "Journal of Hydrology (JOH) + JOH:Regional Studies", "Journal of Hydroinformatics"), csv = c("ScopusQueryJuly2023.csv", "ScopusQueryAllASCEgt2020.csv","ScopusQueryWRR.csv","ScopusQueryJAWRA.csv", "ScopusQueryJOH.csv", "ScopusQueryJofHydroinformatics.csv"), csv2 = c("","ScopusQueryAllASCEgt2018.csv",rep("",4)))
-
-#Select the Journal to analyze
-nJournalUse <- 6
-```
-
-# `r dfJournals$JournalTitle[nJournalUse]`
-
-## Description
-
-This is an R Markdown document. This document reads in a query from Scopus for `r dfJournals$JournalTitle[nJournalUse]`. The document reports:
-
-  1. Number of open-access articles, number of closed articles, and total number of articles
-  2. Results from a Kolgomorov-Smirnov test to see if the number of citations is different for open vs closed-access articles.
-  3. Cumulative distributions of the two number of citations data sets (Figure1).
-
-## Requested Citation
-
-```{r ReadData, echo=FALSE, warning=FALSE, message=FALSE}
-
-sCSVFile <- dfJournals$csv[nJournalUse]
-
+# Read in Scopus query data. Two files one 2017 to 2019, second 2020 to present
+# sCSVFile <- 'ScopusQueryMay2023.csv'
+#sCSVFile <- 'ScopusQueryJuly2023.csv'
+sCSVFile <- 'ScopusQueryAllASCEgt2020.csv'
+#sCSVFile <- 'ScopusQueryAllASCEgt2018.csv'
 dfArticles <- read.csv(file = sCSVFile, header=TRUE, stringsAsFactors=FALSE, sep=",")
 
-if (dfJournals$csv2[nJournalUse] != ""){
-  
-   sCSVFile2 <- dfJournals$csv2[nJournalUse] 
-
-   dfArticles2 <- read.csv(file = sCSVFile2, header=TRUE, stringsAsFactors=FALSE, sep=",")
-
-  #bind the two files together
-  dfArticles <- rbind(dfArticles, dfArticles2)
-  
-}
+sCSVFile2 <- 'ScopusQueryAllASCEgt2018.csv'
+dfArticles2 <- read.csv(file = sCSVFile2, header=TRUE, stringsAsFactors=FALSE, sep=",")
+#bind the two files together
+dfArticles <- rbind(dfArticles, dfArticles2)
 
 #Screen out articles where text read was not correct
 #Convert to numeric or NA
@@ -139,37 +102,9 @@ nArticles <- as.numeric(nrow(dfArticles))
 #Count number of open-access articles
 dfArticles$Open.Access.asBinary <- ifelse(dfArticles$Open.Access == '',0,1)
 nOpenAccess <- sum(dfArticles$Open.Access.asBinary)
-nClosed <- nArticles - nOpenAccess
-
-```
-# Article Counts
-
-Number of Articles: `r format(nArticles,big.mark=",",scientific=FALSE)`
-  
-Number of Open Access Articles: `r format(nOpenAccess,big.mark=",",scientific=FALSE)`  
-Number of Closed Access Articles: `r format(nClosed,big.mark=",",scientific=FALSE)`  
-
-```{r TestPlot, echo=FALSE, warning=FALSE, message=FALSE}
-
 
 dfArticlesOpenAccess <- dfArticles %>% filter(Open.Access.asBinary == 1) %>% select(Cited.by)
 dfArticlesNotOpen <- dfArticles %>% filter(Open.Access.asBinary == 0) %>% select(Cited.by)
-
-#Use Kolgomorv-Smirnov nonparametric test to determine if distribution of number of citations is different for open-access papers as non-open access papers
-ks_result <- ks.test(as.numeric(dfArticlesOpenAccess$Cited.by), as.numeric(dfArticlesNotOpen$Cited.by))
-
-ks_result.data <- 'Open Access and Closed Access'
-print(ks_result)
-
-if(ks_result$p.value > 0.05) {
-  print("Not different at 0.05 level")
-  } else {print("Different with 0.95 confidence")
-    }
-```
-
-# Figure 1. Percent Open Access by Year
-
-```{r Fig1, echo=FALSE, warning=FALSE, message=FALSE}
 
 #Plot Open access vs closed access per year
 cYears <- seq(min(dfArticles$Year)-1,max(dfArticles$Year)+1,1)
@@ -180,7 +115,11 @@ dfArticleByYear <- dfArticles %>% group_by(Year, Open.Access.asBinary) %>% dplyr
 #Pivot Open.Access.asBinary into columns
 dfTest <-  dfArticleByYear %>% pivot_wider(names_from = Open.Access.asBinary, values_from = count)
 #CalculatePercentOpenAccess
-dfTest$PercentOpenAccess <- dfTest$`1` / (dfTest$`0` + dfTest$`1`)
+dfTest$PercentOpenAccess <- dfTest$`1` / dfTest$`0`
+
+#Calculate number of articles from 2020 to 2023
+dfArticles2020To2023 <- dfArticleByYear %>% filter(Year >= 2020) %>% dplyr::summarise(Count = sum(count))
+nArticles2020To2023 <- sum(dfArticles2020To2023$Count)
 
 ggplot(data = dfArticles) +
       geom_histogram(aes(x=Year, color = factor(Open.Access.asBinary), fill = factor(Open.Access.asBinary)), binwidth = 1, color = 'black', width = 5) +
@@ -193,10 +132,18 @@ ggplot(data = dfArticles) +
       theme_light() +
       theme(text = element_text(size = 16) ) 
 
-```
 
-# Figure 2. Cumulative Distributions of Number of Articles Cited
-```{r Fig2, echo=FALSE, warning=FALSE, message=FALSE}
+#Use Kolgomorv-Smirnov nonparametric test to determine if distribution of number of citations is different for open-access papers as non-open access papers
+ks_result <- ks.test(as.numeric(dfArticlesOpenAccess$Cited.by), as.numeric(dfArticlesNotOpen$Cited.by))
+
+print(ks_result)
+
+if(ks_result$p.value > 0.05) {
+  print("Not different at 0.05 level")
+} else {print("Different with 95% confidence")
+}
+
+#ggplot(dfArticles, aes(Cited.by ,color = Open.Access.asBinary, linetype = Open.Access.asBinary)) + 
 
 ggplot(dfArticles, aes(x=as.numeric(Cited.by), color = factor(Open.Access.asBinary)), width = 2) + 
   
@@ -208,4 +155,4 @@ ggplot(dfArticles, aes(x=as.numeric(Cited.by), color = factor(Open.Access.asBina
   theme_light() +
   theme(legend.position = c(0.8,0.8), text = element_text(size = 16) ) 
 
-```
+

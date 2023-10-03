@@ -117,6 +117,10 @@ dfTest <-  dfArticleByYear %>% pivot_wider(names_from = Open.Access.asBinary, va
 #CalculatePercentOpenAccess
 dfTest$PercentOpenAccess <- dfTest$`1` / dfTest$`0`
 
+#Calculate number of articles from 2020 to 2023
+dfArticles2020To2023 <- dfArticleByYear %>% filter(Year >= 2020) %>% dplyr::summarise(Count = sum(count))
+nArticles2020To2023 <- sum(dfArticles2020To2023$Count)
+
 ggplot(data = dfArticles) +
       geom_histogram(aes(x=Year, color = factor(Open.Access.asBinary), fill = factor(Open.Access.asBinary)), binwidth = 1, color = 'black', width = 5) +
       #geom_label(data = dfTest, aes(x = Year, y=`1`+5, label = sprintf("%1.1f%%", 100*PercentOpenAccess)), size = 5) +

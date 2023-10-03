@@ -1,9 +1,9 @@
 {
     "id": "881D588D",
-    "path": "C:/Rosenberg/Work/USU/Service/JournalReviews/WRPM/Admin/OpenAccessAnalysis/OpenAccessAnalysis.R",
+    "path": "C:/Rosenberg/Work/USU/Service/JournalReviews/WRPM/Admin/wrpm_reproduc/OpenAccessAnalysis/OpenAccessAnalysis.R",
     "project_path": "OpenAccessAnalysis.R",
     "type": "r_source",
-    "hash": "3808597956",
+    "hash": "2877098640",
     "contents": "",
     "dirty": false,
     "created": 1685482017808.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "152,0",
-        "scrollLine": "0"
+        "cursorPosition": "122,0",
+        "scrollLine": "117"
     },
     "folds": "",
-    "lastKnownWriteTime": 1688924369,
+    "lastKnownWriteTime": 1696369060,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1688924369982,
+    "last_content_update": 1696369060169,
     "read_only": false,
     "read_only_alternatives": []
 }
